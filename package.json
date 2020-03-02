@@ -1,0 +1,26 @@
+{
+  "name": "bdv-tiled-to-json",
+  "version": "1.0.0",
+  "description": "Reads image file and outputs a json matrix mapping each pixel.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && node ./dist --target img.png"
+  },
+  "author": "brunodev09",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^12.7.2",
+    "clear": "^0.1.0",
+    "clui": "^0.3.6",
+    "figlet": "^1.2.4",
+    "inquirer": "^7.0.1",
+    "sharp": "^0.24.1",
+    "touch": "^3.1.0",
+    "typescript": "^3.4.1",
+    "yargs": "^15.1.0"
+  },
+  "bin": {
+    "bdv": "./dist/src/index.js"
+  }
+}
