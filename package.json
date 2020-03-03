@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/node": "^12.7.2",
+    "@types/sharp": "^0.24.0",
     "clear": "^0.1.0",
     "clui": "^0.3.6",
     "figlet": "^1.2.4",

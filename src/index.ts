@@ -1,6 +1,8 @@
 import sharp from 'sharp';
 import Files from './tools/Files';
 import _ from './tools/Terminal';
+import path from "path";
+
 const argv = require('yargs').argv;
 const { target } = argv;
 
@@ -13,6 +15,7 @@ const findTarget = (target: string, dir: string[]): boolean => {
 
 let uintPixels: number[][] = [];
 let sizedMatrix: number[][] = [];
+let stringifiedData: string = "";
 
 (async () => {
     try {
@@ -20,11 +23,12 @@ let sizedMatrix: number[][] = [];
         const dir = await Files.readDir("./");
         if (!findTarget(target, dir)) throw new Error(`Image file ${target} could not be found on current working directory.`);
         _.say(`Image file ${target} found.`);
-
-        const { data, info } = await sharp(`${process.cwd()}/${target}`)
+        _.say(`Processing image...`);
+        const { data, info } = await sharp(path.join(process.cwd(), target))
             .raw()
             .toBuffer({ resolveWithObject: true });
         const jsonFromBuffer = data.toJSON();
+        _.say(`Image has width of ${info.width}px and height of ${info.height}px. Mapping matrix...`);
 
         for (let i = 0; i < info.width; i++) {
             sizedMatrix[i] = new Array(info.height);
@@ -42,17 +46,20 @@ let sizedMatrix: number[][] = [];
         let inner = 0;
         let resCounter = 0;
         for (let i = 0; i < uintPixels.length; i++) {
-            if (inner < info.height) {
-                (sizedMatrix[resCounter][inner] as any) = uintPixels[i];
+            if (inner < info.width) {
+                (sizedMatrix[inner][resCounter] as any) = uintPixels[i];
+                inner++;
             }
             else {
                 resCounter++;
                 inner = 0;
-                continue;
+                (sizedMatrix[inner][resCounter] as any) = uintPixels[i];
+                inner++;
             }
-            inner++;
         }
-        console.log(sizedMatrix.length)
+        _.say(`Writing to file...`);
+        stringifiedData = JSON.stringify({ map: sizedMatrix });
+        await Files.touch("./", "map.json", stringifiedData);
     } catch (e) {
         _.say(e + " " + e.stack, "red");
         process.exit(1);
